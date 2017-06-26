@@ -1,0 +1,19 @@
+{% extends "rebellion/base.html" %}
+
+{%block CONTENT%}
+<h2>Pending games :</h2>
+<p>
+<ul>
+    {% for game in pending_games %}
+    <li><a href="{%url 'rebellion:pending_game' game.id%}"> {{game}}</a></li>
+    {% endfor %}
+</ul>
+{% if request.user.is_authenticated and can_create %}
+<form action="{% url 'rebellion:create_pending_game'%}" method="post">
+    {% csrf_token %}
+    <input type="submit" value="Create Game"/>
+</form>
+{% endif %}
+</p>
+
+{%endblock CONTENT%}

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SW:R</title>
+
+</head>
+<body>
+    <h1> Star Wars : Rebellion</h1>
+
+    <p>
+        <a href="{% url 'rebellion:index' %}">Home</a>
+    </p>
+
+    <p>
+        {% if base_message %}
+            <span style="color:#FF0000">{{ base_message }}</span>
+        {% endif %}
+    </p>
+
+    <p>
+        {% block USER%}
+            {% if not user %}
+                <form action="{% url 'rebellion:login'%}" method="post">
+                    {% csrf_token %}
+                    <input type="text" name="username" id="1" /> <br />
+                    <input type="password" name="password" id="2" /> <br />
+                    <input type="submit" value="Connect" />
+                </form>
+                <a href="{%url 'rebellion:create_account'%}">Create Account</a>
+            {% else %}
+                Hello, {{user.username}} !
+                <form action="{% url 'rebellion:logout'%}" method="post">
+                    {% csrf_token %}
+                    <input type="submit" value="Disconnect" />
+                    <a href="{%url 'rebellion:index'%}">Profile</a>
+                </form>
+            {% endif %}
+        {% endblock USER %}
+    </p>
+
+
+    <p>
+        {%block CONTENT%}
+            This is base
+        {%endblock CONTENT%}
+    </p>
+
+
+</body>
+</html>

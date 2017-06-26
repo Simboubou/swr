@@ -1,0 +1,29 @@
+{% extends "rebellion/base.html" %}*
+
+{%block CONTENT%}
+<h2>{{game.game_name}}</h2>
+
+<h3>Players : </h3>
+<ul>
+    <li>{{game.owner}}</li>
+    {% if game.joiner %}
+    <li>{{game.joiner}}</li>
+    {%endif %}
+</ul>
+{% if can_start %}
+<form action="{% url 'rebellion:start_game'%}" method="post">
+    {% csrf_token %}
+    <input type="hidden" value={{game.id}} name="pgame_id">
+    <input type="submit" value="Start Game !"/>
+</form>
+{% endif %}
+
+{% if can_join %}
+<form action="{% url 'rebellion:join_game'%}" method="post">
+    {% csrf_token %}
+    <input type="hidden" value={{game.id}} name="pgame_id">
+    <input type="submit" value="Join Game"/>
+</form>
+{% endif %}
+
+{%endblock CONTENT%}

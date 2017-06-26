@@ -1,0 +1,18 @@
+{% "extends base.html" %}
+
+{% block CONTENT %}
+<form action="{% url 'rebellion:create_account'%}" method="post">
+    {% csrf_token %}
+    <ul>
+        <li>Nickname : <input type="text" name="username" id="1"/></li>
+        <br/>
+        <li>E-mail : <input type="text" name="email" id="2"/></li>
+        <br/>
+        <li>Password : <input type="password" name="password1" id="3"/></li>
+        <br/>
+        <li>Confirm : <input type="password" name="password2" id="4"/></li>
+        <br/>
+        <input type="submit" value="Create"/>
+    </ul>
+</form>
+{% endblock CONTENT %}
