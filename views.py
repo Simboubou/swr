@@ -5,7 +5,7 @@ from django.shortcuts import render, get_object_or_404, reverse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from .models import *
-
+from django.contrib.auth.decorators import login_required
 
 def Index(request):
     if not request.user.is_authenticated():
@@ -23,6 +23,8 @@ def Index(request):
 
 
 def _canCreate(user):
+    if not user.is_authenticated:
+        return False
     return len(PendingGame.objects.filter(owner=user)) == 0
 
 
@@ -50,7 +52,7 @@ def CreateAccount(request):
             return render(request, 'rebellion/create_account.html')
     elif request.method == 'POST':
         username = request.POST['username']
-        email = request.POST['username']
+        email = request.POST['email']
         password1 = request.POST['password1']
         password2 = request.POST['password2']
         if password1 == password2:
@@ -79,7 +81,7 @@ def ViewPendingGame(request, pgame_id):
         return render(request, 'rebellion/pending_game.html', params)
     return HttpResponseRedirect(reverse('rebellion:index'))
 
-
+@login_required
 def CreatePendingGame(request):
     if request.method == 'POST':
         if _canCreate(request.user):
@@ -90,7 +92,7 @@ def CreatePendingGame(request):
                 reverse('rebellion:index'))
     return HttpResponseRedirect(reverse('rebellion:index'))
 
-
+@login_required
 def StartGame(request):
     if request.method == 'POST':
         pg = PendingGame.get(request.POST['pgame_id'])
@@ -103,11 +105,11 @@ def StartGame(request):
             return HttpResponseRedirect(reverse('rebellion:index'))
     return HttpResponseRedirect(reverse('rebellion:index'))
 
-
+@login_required
 def JoinGame(request):
-    if request.method == 'POST':
+    if request.method == 'POST' :
         pg = PendingGame.get(request.POST['pgame_id'])
-        if pg.owner is not None and pg.owner != request.user:
+        if pg.owner is not None and pg.owner != request.user and not pg.isFull():
             pg.join(request.user)
             return HttpResponseRedirect(reverse('rebellion:pending_game', kwargs={'pgame_id': pg.id}))
     return HttpResponseRedirect(reverse('rebellion:index'))
