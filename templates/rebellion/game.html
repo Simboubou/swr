@@ -1,0 +1,9 @@
+{% extends "rebellion/base.html" %}
+
+{% block CONTENT %}
+
+<h2>{{game.game_name}}</h2>
+<h3>{{game.rebel_player.username}} (Rebels) - {{game.imperial_player.username}} (Empire)</h3>
+<h4>Turn {{game.turn}} - Time : {{game.time_marker}} / {{game.reputation_marker}} : Reputation</h4>
+
+{% endblock %}
