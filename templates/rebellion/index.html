@@ -14,6 +14,11 @@
     <input type="submit" value="Create Game"/>
 </form>
 {% endif %}
+<h2>Ongoing games :</h2>
+<p>
+    {% for game in ongoing_games %}
+    <li><a href="{%url 'rebellion:view_game' game.id%}"> {{game}}</a></li>
+    {% endfor %}
 </p>
 
 {%endblock CONTENT%}

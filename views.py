@@ -8,16 +8,18 @@ from .models import *
 from django.contrib.auth.decorators import login_required
 
 def Index(request):
-    if not request.user.is_authenticated():
-        params_dict = {'user': None}
-    else:
-        params_dict = {'user': request.user}
+
+    params_dict = {}
 
     # Get the list of pending games
     pending_games = PendingGame.objects.order_by('-date_created')
     params_dict['pending_games'] = pending_games
     if request.user.is_authenticated and _canCreate(request.user):
         params_dict['can_create'] = '1'
+
+    # Get the list of ongoing games
+    ongoing_games = Game.objects.order_by('-date_created')
+    params_dict['ongoing_games'] = ongoing_games
 
     return render(request, 'rebellion/index.html', params_dict)
 
@@ -49,7 +51,7 @@ def CreateAccount(request):
         if request.user.is_authenticated():
             return HttpResponseRedirect(reverse('rebellion:index'))
         else:
-            return render(request, 'rebellion/create_account.html')
+            return render(request, 'rebellion/create_account.html',)
     elif request.method == 'POST':
         username = request.POST['username']
         email = request.POST['email']
@@ -72,7 +74,6 @@ def ViewPendingGame(request, pgame_id):
     if request.method == 'GET':
         pg = PendingGame.get(pgame_id)
         params = {'game': pg}
-        print(request.user, pg.joiner, pg.isFull(), request.user.is_authenticated)
         if request.user == pg.owner:
             if pg.joiner is not None:
                 params['can_start'] = '1'
@@ -97,10 +98,8 @@ def StartGame(request):
     if request.method == 'POST':
         pg = PendingGame.get(request.POST['pgame_id'])
         if pg.owner == request.user and pg.joiner is not None:
-            game_id = pg.startGame()
-            print("Created !")  # TODO
-            # return HttpResponseRedirect(reverse('rebellion:view_game', kwargs={'game_id': pg.id}))
-            return HttpResponseRedirect(reverse('rebellion:index'))
+            started_game = pg.startGame()
+            return HttpResponseRedirect(reverse('rebellion:view_game', kwargs={'game_id': started_game.id}))
         else:
             return HttpResponseRedirect(reverse('rebellion:index'))
     return HttpResponseRedirect(reverse('rebellion:index'))
@@ -116,4 +115,7 @@ def JoinGame(request):
 
 
 def ViewGame(request, game_id):
-    return HttpResponseRedirect(reverse('rebellion:index'))
+    if request.method == 'GET':
+        pg = Game.get(game_id)
+        params = {'game': pg}
+        return render(request, 'rebellion/game.html', params)

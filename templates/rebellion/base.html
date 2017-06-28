@@ -20,7 +20,7 @@
 
     <p>
         {% block USER%}
-            {% if not user %}
+            {% if not request.user.is_authenticated %}
                 <form action="{% url 'rebellion:login'%}" method="post">
                     {% csrf_token %}
                     <input type="text" name="username" id="1" /> <br />

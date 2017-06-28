@@ -20,6 +20,7 @@ class TestUserCreation(TestCase):
                   'email': 'alice@yopmail.com',
                   'password1': 'passwordalice',
                   'password2': 'passwordalice'}
+        self.client.get(reverse('rebellion:create_account'))
         self.client.post(reverse('rebellion:create_account'), params)
         self.client.get(reverse('rebellion:logout'))
 
@@ -132,3 +133,40 @@ class TestPendingGame(TestCase):
         claire = User.objects.get(username='Claire')
         self.assertEquals(len(PendingGame.objects.filter(owner=alice, joiner=bob)), 1)
         self.assertEquals(len(PendingGame.objects.filter(owner=alice, joiner=claire)), 0)
+
+class TestStartGame(TestCase):
+
+    def setUp(self):
+        self.alice_creds = _creds("Alice", "passwordalice")
+        self.bob_creds = _creds("Bob", "passwordbob")
+        User.objects.create_user(username="Alice", password="passwordalice")
+        User.objects.create_user(username="Bob", password="passwordbob")
+        self.alice = User.objects.get(username='Alice')
+        self.bob = User.objects.get(username='Bob')
+
+    def test_start(self):
+        self.client.post(reverse('rebellion:login'), self.alice_creds)
+        self.client.post(reverse('rebellion:create_pending_game'))
+        self.client.post(reverse('rebellion:logout'))
+        self.client.post(reverse('rebellion:login'), self.bob_creds)
+        self.client.post(reverse('rebellion:join_game'), {'pgame_id': '1'})
+        self.client.post(reverse('rebellion:logout'))
+        self.client.post(reverse('rebellion:login'), self.alice_creds)
+        self.client.post(reverse('rebellion:start_game'), {'pgame_id': '1'})
+
+        self.assertEquals(len(PendingGame.objects.filter(owner=self.alice, joiner=self.bob)), 0)
+        self.assertEquals(len(Game.objects.all()), 1)
+
+    def test_start_fail(self):
+        self.client.post(reverse('rebellion:login'), self.alice_creds)
+        self.client.post(reverse('rebellion:create_pending_game'))
+        self.client.post(reverse('rebellion:logout'))
+        self.client.post(reverse('rebellion:login'), self.bob_creds)
+        self.client.post(reverse('rebellion:join_game'), {'pgame_id': '1'})
+        self.client.post(reverse('rebellion:start_game'), {'pgame_id': '1'})
+        self.client.post(reverse('rebellion:logout'))
+        self.client.post(reverse('rebellion:start_game'), {'pgame_id': '1'})
+
+        self.assertEquals(len(PendingGame.objects.filter(owner=self.alice, joiner=self.bob)), 1)
+        self.assertEquals(len(Game.objects.all()), 0)
+
