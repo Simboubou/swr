@@ -1,0 +1,41 @@
+<table width="160px">
+    <tr>
+        <td align="center" width="20px">
+            {% if isPopulous %}
+            <span style="background-color:#{{loyalty_color}};">{{loyalty}}</span>{% if is_subjugated %}S{% endif %}
+            {% endif %}
+        </td>
+        <td align="center" colspan="2"> {{name}}</td>
+        <td align="center" width="20px">
+            {% if isPopulous %}
+            <span>{{prodrank}}</span><span style="{{prod1style}}">{{prod1level}}</span>{% if prod2level %}<span style="{{prod2style}}">{{prod2level}}</span>
+            {%endif%}
+            {%endif%}
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2" align="right">
+            {%if X%}{{X}}X{%endif%} {%if Y%}{{Y}}Y{%endif%} {%if T%}{{T}}T{%endif%} </br>
+            {%if C%}{{C}}C{%endif%} </br>
+            {%if M%}{{M}}M{%endif%}</td>
+        <td colspan="2" align="left">
+            {%if TF%}{{TF}}T{%endif%} </br>
+            {%if AC%}{{AC}}C{%endif%} </br>
+            {%if D%}{{D}}D{%endif%} {%if I%}{{I}}I{%endif%} {%if O%}{{O}}O{%endif%} {%if G%}{{G}}G{%endif%}</td>
+    </tr>
+    <tr>
+        <td colspan="2" align="right">
+            {%if RT%}{{RT}}T{%endif%} </br>
+            {%if S%}{{S}}S{%endif%} </br>
+            {%if SG%}{{SG}}S{%endif%}
+            {%if IC%}{{IC}}I{%endif%}</td>
+        <td colspan="2" align="left">
+            {%if ST%}{{ST}}T{%endif%} </br>
+            {%if ATST%}{{ATST}}S{%endif%} </br>
+            {%if ATAT%}{{ATAT}}A{%endif%}</td>
+    </tr>
+    <tr>
+        <td colspan="2" align="right" valign="top">X</td>
+        <td colspan="2" align="left" valign="top"> X</td>
+    </tr>
+</table>

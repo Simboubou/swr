@@ -7,8 +7,8 @@ from django.contrib.auth.models import User
 from .models import *
 from django.contrib.auth.decorators import login_required
 
-def Index(request):
 
+def Index(request):
     params_dict = {}
 
     # Get the list of pending games
@@ -51,7 +51,7 @@ def CreateAccount(request):
         if request.user.is_authenticated():
             return HttpResponseRedirect(reverse('rebellion:index'))
         else:
-            return render(request, 'rebellion/create_account.html',)
+            return render(request, 'rebellion/create_account.html', )
     elif request.method == 'POST':
         username = request.POST['username']
         email = request.POST['email']
@@ -82,6 +82,7 @@ def ViewPendingGame(request, pgame_id):
         return render(request, 'rebellion/pending_game.html', params)
     return HttpResponseRedirect(reverse('rebellion:index'))
 
+
 @login_required
 def CreatePendingGame(request):
     if request.method == 'POST':
@@ -92,6 +93,7 @@ def CreatePendingGame(request):
             return HttpResponseRedirect(
                 reverse('rebellion:index'))
     return HttpResponseRedirect(reverse('rebellion:index'))
+
 
 @login_required
 def StartGame(request):
@@ -104,9 +106,10 @@ def StartGame(request):
             return HttpResponseRedirect(reverse('rebellion:index'))
     return HttpResponseRedirect(reverse('rebellion:index'))
 
+
 @login_required
 def JoinGame(request):
-    if request.method == 'POST' :
+    if request.method == 'POST':
         pg = PendingGame.get(request.POST['pgame_id'])
         if pg.owner is not None and pg.owner != request.user and not pg.isFull():
             pg.join(request.user)
@@ -118,4 +121,18 @@ def ViewGame(request, game_id):
     if request.method == 'GET':
         pg = Game.get(game_id)
         params = {'game': pg}
+        sys = System(name="Coruscant", isPopulous=True, prod1level=2, prod1isGround=True, prod2level=1,
+                     prod2isGround=False, prodRank=1)
+        sys.save()
+        sysIns = SystemInstance(system=sys, game=pg, loyalty=-1)
+        sysIns.nbXwings = 2
+        sysIns.nbYwings = 5
+        sysIns.nbMonCals = 2
+        sysIns.nbStorms = 5
+        sysIns.nbATSTs = 1
+        sysIns.nbRtransports = 0
+        sysIns.save()
+        params['test'] = sysIns.render()
+        sysIns.delete()
+        sys.delete()
         return render(request, 'rebellion/game.html', params)
