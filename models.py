@@ -80,10 +80,26 @@ class System(models.Model):
     prod1level = models.PositiveSmallIntegerField(default=0)
     prod2level = models.PositiveSmallIntegerField(default=0)
 
+    @classmethod
+    def create(cls,**kwargs) :
+        s = cls(**kwargs)
+        s.save()
+        return s
+
+    def __str__(self):
+        return self.name
 
 class SystemLink(models.Model):
     origin = models.ForeignKey(System, related_name="neighbours")
     dest = models.ForeignKey(System)
+
+    @classmethod
+    def createSym(cls, system1, system2):
+        link = cls(origin=system1, dest=system2)
+        link.save()
+        link = cls(origin=system2, dest=system1)
+        link.save()
+
 
 
 class SystemInstance(models.Model):
